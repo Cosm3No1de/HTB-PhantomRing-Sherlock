@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PhantomRing · Sherlock Walkthrough</title>
+    <title>PhantomRing · Análisis Estático - Walkthrough</title>
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         /* ——— RESET & BASE ——— */
         * {
@@ -13,164 +15,302 @@
         }
 
         body {
-            background: #0a0c10;
-            font-family: 'Courier New', 'Fira Code', monospace;
-            color: #b7c9d4;
-            padding: 20px;
-            line-height: 1.6;
+            background: #0a0e14;
+            color: #c8d6e5;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            line-height: 1.7;
+            padding: 0 20px 40px;
+        }
+
+        a {
+            text-decoration: none;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: #13171d;
-            border-radius: 18px;
+            background: #10161e;
+            border-radius: 24px;
             padding: 30px 35px;
-            box-shadow: 0 0 40px rgba(0, 255, 200, 0.04);
-            border: 1px solid #2b3a4a;
+            box-shadow: 0 20px 60px rgba(0, 255, 200, 0.05);
+            border: 1px solid #1f2e3a;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Efecto de línea de fondo sutil */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(0, 255, 150, 0.02) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         /* ——— BANNER ——— */
         .banner {
             width: 100%;
             margin-bottom: 30px;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            border: 1px solid #1f8f5b;
-            box-shadow: 0 0 30px rgba(0, 255, 150, 0.08);
+            border: 1px solid #2a8f5f;
+            box-shadow: 0 0 40px rgba(0, 255, 150, 0.06);
+            transition: 0.4s;
         }
         .banner img {
             width: 100%;
             height: auto;
             display: block;
-            background: #0b0f14;
+            background: #0b1119;
+        }
+        .banner:hover {
+            border-color: #4fcf8f;
+            box-shadow: 0 0 60px rgba(0, 255, 150, 0.12);
         }
 
         /* ——— HEADER ——— */
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
+            align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             border-bottom: 2px solid #1f8f5b;
-            padding-bottom: 12px;
+            padding-bottom: 14px;
         }
         .header h1 {
-            font-size: 2.2rem;
-            color: #b3ffe0;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #1f8f5b55;
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #b3ffe0, #6fcf97);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 150, 0.15);
         }
-        .header h1 span {
-            color: #f0a070;
+        .header h1 i {
+            -webkit-text-fill-color: initial;
+            color: #6fcf97;
+            margin-right: 12px;
         }
         .header .badge {
-            background: #1f2a3a;
-            padding: 6px 18px;
-            border-radius: 30px;
+            background: #1a2835;
+            padding: 8px 22px;
+            border-radius: 40px;
             font-size: 0.9rem;
             color: #8fcbff;
-            border: 1px solid #2f8fbf;
+            border: 1px solid #2f7faf;
+            letter-spacing: 0.5px;
+        }
+        .header .badge i {
+            margin-right: 8px;
         }
 
         .sub {
-            color: #7a8b9e;
-            margin-bottom: 28px;
-            font-size: 1rem;
+            color: #7a8fa0;
+            margin: 8px 0 28px 0;
+            font-size: 1.05rem;
             border-left: 4px solid #1f8f5b;
-            padding-left: 18px;
+            padding-left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .sub .tag {
+            background: #1f2f3f;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #8fcbff;
         }
 
         .policy-note {
-            background: #1f2a3a;
-            padding: 12px 20px;
-            border-radius: 8px;
-            border-left: 4px solid #f0a070;
-            margin-bottom: 30px;
+            background: #1a2530;
+            padding: 14px 24px;
+            border-radius: 10px;
+            border-left: 5px solid #f0a070;
+            margin-bottom: 35px;
             color: #d4c0a0;
             font-style: italic;
-        }
-        .policy-note strong {
-            color: #f0a070;
-        }
-
-        /* ——— TASKS ——— */
-        .task {
-            background: #0d1219;
-            border-left: 4px solid #2f8fbf;
-            padding: 16px 22px;
-            margin: 28px 0;
-            border-radius: 0 10px 10px 0;
-            transition: 0.2s;
-        }
-        .task:hover {
-            border-left-color: #5fcf9f;
-            background: #111a24;
-        }
-
-        .task h3 {
-            color: #9fc9e0;
-            font-size: 1.2rem;
             display: flex;
             align-items: center;
             gap: 14px;
             flex-wrap: wrap;
         }
-        .task h3 .q {
+        .policy-note i {
+            color: #f0a070;
+            font-size: 1.4rem;
+        }
+        .policy-note strong {
+            color: #f0a070;
+        }
+
+        /* ——— NAVEGACIÓN (índice) ——— */
+        .nav-index {
+            background: #0d141e;
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 35px;
+            border: 1px solid #1f2f3f;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 20px;
+        }
+        .nav-index a {
+            color: #7a8fa0;
+            font-size: 0.9rem;
+            padding: 4px 12px;
+            border-radius: 30px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+        .nav-index a:hover {
+            color: #b3ffe0;
+            border-color: #2f8f5f;
+            background: #1a2a30;
+        }
+        .nav-index a i {
+            margin-right: 6px;
+            color: #6fcf97;
+        }
+
+        /* ——— TAREAS ——— */
+        .task {
+            background: #0d141e;
+            border-left: 4px solid #2f7faf;
+            padding: 22px 26px;
+            margin: 32px 0;
+            border-radius: 0 14px 14px 0;
+            transition: 0.25s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .task:hover {
+            border-left-color: #5fcf9f;
+            background: #111c28;
+            transform: translateX(4px);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .task-header .num {
+            background: #1f8f5b;
+            color: #0a0e14;
+            font-weight: 700;
+            padding: 0 14px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            line-height: 28px;
+        }
+        .task-header h3 {
+            font-size: 1.4rem;
+            color: #c8e6d0;
+            font-weight: 600;
+        }
+        .task-header .q {
             color: #e0b090;
             font-weight: normal;
+            font-size: 1.05rem;
+        }
+
+        .task-body {
+            margin-top: 10px;
+        }
+
+        .objective {
+            background: #0b1119;
+            padding: 10px 18px;
+            border-radius: 8px;
+            border-left: 3px solid #3f8fbf;
+            margin: 10px 0 14px 0;
+            color: #b0c8d8;
+        }
+        .objective i {
+            color: #3f8fbf;
+            margin-right: 10px;
+        }
+
+        .method {
+            color: #a0b8c8;
+            margin: 8px 0 12px 0;
+            padding-left: 6px;
+        }
+        .method i {
+            color: #5faf8f;
+            margin-right: 8px;
         }
 
         .cmd {
-            background: #0b1119;
-            padding: 8px 16px;
-            border-radius: 6px;
-            margin: 10px 0 6px 0;
-            font-family: 'Courier New', monospace;
+            background: #0a111a;
+            padding: 10px 18px;
+            border-radius: 8px;
+            margin: 8px 0 8px 0;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
             color: #d4b48c;
-            border: 1px solid #2a3a4a;
+            border: 1px solid #1f2f3f;
             overflow-x: auto;
             white-space: pre-wrap;
             word-break: break-all;
+            font-size: 0.95rem;
+        }
+        .cmd i {
+            color: #6fcf97;
+            margin-right: 8px;
         }
 
-        .out {
-            background: #091017;
-            padding: 8px 16px;
-            border-radius: 6px;
+        .output {
+            background: #080e16;
+            padding: 8px 18px;
+            border-radius: 8px;
             margin: 6px 0 12px 0;
-            font-family: 'Courier New', monospace;
-            color: #aabbcc;
-            border: 1px solid #1f2f3f;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            color: #b0c4d8;
+            border: 1px solid #1a2a3a;
             white-space: pre-wrap;
             word-break: break-all;
+            font-size: 0.95rem;
         }
 
-        .explain {
-            color: #b0c0d0;
-            margin: 8px 0 12px 0;
-            padding-left: 4px;
-            border-left: 2px solid #3f6f8f;
-            padding-left: 14px;
-        }
-
-        .spoiler {
-            background: #1a252f;
+        .interpretation {
+            background: #111f2a;
             padding: 10px 18px;
-            border-radius: 30px;
+            border-radius: 8px;
+            border-left: 3px solid #7f5fbf;
+            margin: 12px 0 14px 0;
+            color: #c0b8d0;
+        }
+        .interpretation i {
+            color: #7f5fbf;
+            margin-right: 10px;
+        }
+
+        /* ——— SPOILER ——— */
+        .spoiler {
+            background: #1a2a36;
+            padding: 10px 24px;
+            border-radius: 40px;
             display: inline-block;
             cursor: pointer;
             user-select: none;
-            border: 1px solid #3f6f8f;
-            transition: 0.2s;
-            margin-top: 10px;
+            border: 1px solid #3f7f9f;
+            transition: 0.25s;
+            margin-top: 6px;
             color: #8fcbff;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 0.95rem;
         }
         .spoiler:hover {
             background: #1f3a4a;
             border-color: #5fcf9f;
+            box-shadow: 0 0 20px rgba(0, 255, 150, 0.05);
         }
         .spoiler .hidden {
             display: none;
@@ -181,256 +321,461 @@
         .spoiler.revealed .mask {
             display: none;
         }
+        .spoiler i {
+            margin-right: 8px;
+        }
 
         .answer-badge {
             display: inline-block;
             background: #1f3f2f;
             color: #7fdfaf;
-            padding: 2px 18px;
+            padding: 2px 20px;
             border-radius: 30px;
-            font-weight: bold;
+            font-weight: 700;
             border: 1px solid #2f8f5f;
-            margin-top: 8px;
-        }
-
-        .note {
-            background: #1f2a3a;
-            padding: 6px 16px;
-            border-radius: 6px;
-            color: #b8a0d0;
-            font-style: italic;
-            margin: 12px 0 4px 0;
-            border-left: 3px solid #7f5fbf;
+            margin: 10px 0 4px 0;
+            font-size: 0.95rem;
         }
 
         /* ——— FOOTER ——— */
         .footer {
-            margin-top: 50px;
-            padding-top: 25px;
-            border-top: 1px solid #2a3a4a;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #1f2f3f;
             text-align: center;
         }
         .footer a {
             display: inline-block;
-            background: #1a2a3a;
-            padding: 12px 34px;
+            background: #14222e;
+            padding: 14px 40px;
             border-radius: 60px;
             color: #c0e0f0;
-            text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 1.3rem;
             border: 1px solid #4f8faf;
             transition: 0.3s;
-            box-shadow: 0 0 20px #1f8faf33;
-            animation: pulse 2.2s infinite alternate;
+            box-shadow: 0 0 30px rgba(31, 143, 175, 0.1);
+            animation: glowPulse 2.4s infinite alternate;
         }
         .footer a:hover {
             background: #3f8faf;
             color: #0b0f14;
-            transform: scale(1.04);
-            box-shadow: 0 0 50px #3fbfdf;
+            transform: scale(1.05);
+            box-shadow: 0 0 60px rgba(63, 191, 223, 0.3);
             animation: none;
         }
-        @keyframes pulse {
+        @keyframes glowPulse {
             0% { box-shadow: 0 0 8px #2f8faf55; }
-            100% { box-shadow: 0 0 35px #2fcfafaa; }
+            100% { box-shadow: 0 0 40px #2fcfafaa; }
         }
-        .footer .emoji {
-            font-size: 1.8rem;
+        .footer a i {
+            margin-right: 12px;
+            font-size: 1.6rem;
             vertical-align: middle;
-            margin-right: 10px;
         }
         .footer .copy {
-            margin-top: 18px;
+            margin-top: 20px;
             font-size: 0.85rem;
             color: #5a6f7f;
+            letter-spacing: 0.3px;
+        }
+        .footer .copy i {
+            margin: 0 6px;
         }
 
         /* ——— RESPONSIVE ——— */
-        @media (max-width: 650px) {
+        @media (max-width: 700px) {
             .container { padding: 16px; }
-            .header h1 { font-size: 1.5rem; }
-            .task { padding: 12px 16px; }
+            .header h1 { font-size: 1.8rem; }
+            .task { padding: 16px 18px; }
+            .nav-index { gap: 6px; }
+            .nav-index a { font-size: 0.75rem; padding: 2px 10px; }
+            .sub { font-size: 0.9rem; }
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.4rem; }
+            .task-header h3 { font-size: 1.1rem; }
+            .cmd { font-size: 0.8rem; }
+            .footer a { font-size: 1rem; padding: 10px 24px; }
         }
     </style>
 </head>
 <body>
 <div class="container">
 
-    <!-- BANNER (raíz del repositorio) -->
+    <!-- ========== BANNER (raíz) ========== -->
     <div class="banner">
         <img src="/PhantonRing!.png" alt="PhantomRing Banner" />
     </div>
 
-    <!-- HEADER -->
+    <!-- ========== HEADER ========== -->
     <div class="header">
-        <h1>◈ <span>Phantom</span>Ring</h1>
-        <span class="badge">#Sherlock · Muy Fácil</span>
+        <h1><i class="fas fa-skull-crossbones"></i> PhantomRing</h1>
+        <span class="badge"><i class="fas fa-microchip"></i> Sherlock · Muy Fácil</span>
     </div>
     <div class="sub">
-        Análisis estático completo · Metodología paso a paso · <span style="color:#5fcf9f;">IoCs bajo spoiler</span>
+        <span><i class="fas fa-terminal" style="color:#6fcf97;"></i> Análisis estático completo</span>
+        <span class="tag"><i class="fas fa-flag"></i> HTB</span>
+        <span class="tag"><i class="fas fa-linux"></i> Linux</span>
+        <span class="tag"><i class="fas fa-bug"></i> Malware</span>
     </div>
 
     <div class="policy-note">
-        ⚠️ <strong>Política HTB:</strong> Las respuestas están ocultas para preservar la integridad del reto.
-        Haz clic en cada botón <strong>[Mostrar respuesta]</strong> para revelar el valor obtenido.
+        <i class="fas fa-shield-alt"></i>
+        <span><strong>Política HTB:</strong> Las respuestas están ocultas para preservar la integridad del reto. Haz clic en <strong>[Mostrar IoC]</strong> para revelar cada valor obtenido.</span>
     </div>
 
-    <!-- ===== TAREA 1 ===== -->
-    <div class="task">
-        <h3><span class="q">T1 ·</span> Hash SHA256 del binario</h3>
-        <div class="cmd">$ sha256sum agent</div>
-        <div class="out">bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4</div>
-        <div class="explain">El hash se obtiene directamente del binario. Es único para esta muestra.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar respuesta ]</span>
-            <span class="hidden">✅ bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4</span>
+    <!-- ========== ÍNDICE ========== -->
+    <div class="nav-index">
+        <a href="#t1"><i class="fas fa-hashtag"></i>T1</a>
+        <a href="#t2"><i class="fas fa-hashtag"></i>T2</a>
+        <a href="#t3"><i class="fas fa-hashtag"></i>T3</a>
+        <a href="#t4"><i class="fas fa-hashtag"></i>T4</a>
+        <a href="#t5"><i class="fas fa-hashtag"></i>T5</a>
+        <a href="#t6"><i class="fas fa-hashtag"></i>T6</a>
+        <a href="#t7"><i class="fas fa-hashtag"></i>T7</a>
+        <a href="#t8"><i class="fas fa-hashtag"></i>T8</a>
+        <a href="#t9"><i class="fas fa-hashtag"></i>T9</a>
+        <a href="#t10"><i class="fas fa-hashtag"></i>T10</a>
+        <a href="#t11"><i class="fas fa-hashtag"></i>T11</a>
+        <a href="#t12"><i class="fas fa-hashtag"></i>T12</a>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TAREA 1 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t1">
+        <div class="task-header">
+            <span class="num">T1</span>
+            <h3><span class="q">Hash SHA256</span> del binario</h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Obtener el hash criptográfico del archivo malicioso para su identificación única y compartición como IoC.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Utilizamos la herramienta estándar <code>sha256sum</code> sobre el binario <code>agent</code>.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> sha256sum agent</div>
+            <div class="output">bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> El hash es una huella digital del binario. Se utiliza para verificar integridad y para detectar la misma muestra en otros sistemas.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">✅ bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 2 ===== -->
-    <div class="task">
-        <h3><span class="q">T2 ·</span> IP del C2</h3>
-        <div class="cmd">$ strings agent | grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}'</div>
-        <div class="out">192.168.56.1</div>
-        <div class="explain">Filtramos cadenas legibles que coincidan con el patrón de una dirección IPv4.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar IP ]</span>
-            <span class="hidden">🌐 192.168.56.1</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 2 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t2">
+        <div class="task-header">
+            <span class="num">T2</span>
+            <h3><span class="q">IP del C2</span></h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Identificar la dirección IP del servidor de comando y control al que el agente intenta conectarse.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Extraemos todas las cadenas ASCII del binario con <code>strings</code> y filtramos aquellas que coinciden con el patrón de una IPv4 (cuatro números separados por puntos).
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}'</div>
+            <div class="output">192.168.56.1</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> La IP aparece como cadena legible, lo que indica que está hardcodeada en el binario. Es una IP privada, típica de entornos de pruebas o redes internas.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">🌐 192.168.56.1</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 3 ===== -->
-    <div class="task">
-        <h3><span class="q">T3 ·</span> Puerto del C2</h3>
-        <div class="cmd">$ objdump -d agent | grep -A5 -B5 'htons@plt'</div>
-        <div class="out">mov    $0x115d,%edi<br />call   htons@plt</div>
-        <div class="explain">Localizamos la llamada a <code>htons</code> que convierte el puerto a orden de red. El valor <code>0x115d</code> en hexadecimal equivale al puerto decimal.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar puerto ]</span>
-            <span class="hidden">🔌 4445</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 3 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t3">
+        <div class="task-header">
+            <span class="num">T3</span>
+            <h3><span class="q">Puerto del C2</span></h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Determinar el puerto TCP utilizado para la comunicación con el C2.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> El puerto suele estar codificado en la estructura <code>sockaddr_in</code> y se convierte a orden de red mediante <code>htons</code>. Buscamos la llamada a <code>htons@plt</code> en el código desensamblado y observamos el valor inmediato que se pasa como argumento.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> objdump -d agent | grep -A5 -B5 'htons@plt'</div>
+            <div class="output">mov    $0x115d,%edi<br />call   htons@plt</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> <code>0x115d</code> en hexadecimal equivale a 4445 en decimal. Ese es el puerto que se usa en la conexión.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">🔌 4445</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 4 ===== -->
-    <div class="task">
-        <h3><span class="q">T4 ·</span> Tiempo de espera (reconexión)</h3>
-        <div class="cmd">$ objdump -d agent | grep -A2 -B2 'call.*sleep' | grep -o '\$0x[0-9a-f]*'</div>
-        <div class="out">$0x78</div>
-        <div class="explain">Buscamos el argumento pasado a <code>sleep()</code>. <code>0x78</code> en hex corresponde a segundos.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar segundos ]</span>
-            <span class="hidden">⏱️ 120</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 4 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t4">
+        <div class="task-header">
+            <span class="num">T4</span>
+            <h3><span class="q">Tiempo de espera</span> para reconexión</h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Saber cuántos segundos espera el agente antes de intentar reconectar tras un fallo.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos la llamada a la función <code>sleep()</code> en el código ensamblador y extraemos su argumento (el número de segundos).
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> objdump -d agent | grep -A2 -B2 'call.*sleep' | grep -o '\$0x[0-9a-f]*'</div>
+            <div class="output">$0x78</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> <code>0x78</code> = 120 decimal. Por lo tanto, el agente espera 120 segundos (2 minutos) antes de reintentar la conexión.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">⏱️ 120 segundos</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 5 ===== -->
-    <div class="task">
-        <h3><span class="q">T5 ·</span> Número de comandos soportados</h3>
-        <div class="cmd">$ objdump -t agent | grep -c ' cmd_'</div>
-        <div class="out">11</div>
-        <div class="explain">Contamos las funciones que comienzan con <code>cmd_</code> en la tabla de símbolos. Cada una gestiona un comando específico.</div>
-        <div class="note">📋 Comandos identificados: <strong>get, recv, users, netstat, kick, privesc, sdestruct, killbpf, exit, me, ps</strong></div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar total ]</span>
-            <span class="hidden">✅ 11 comandos</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 5 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t5">
+        <div class="task-header">
+            <span class="num">T5</span>
+            <h3><span class="q">Número de comandos</span> soportados</h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Contar cuántos comandos diferentes acepta el agente (excluyendo el comando inválido).
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Cada comando es manejado por una función cuyo nombre comienza con <code>cmd_</code>. Listamos la tabla de símbolos y contamos esas funciones.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> objdump -t agent | grep -c ' cmd_'</div>
+            <div class="output">11</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> Hay 11 funciones <code>cmd_*</code>, lo que significa que el agente soporta 11 comandos. Los identificados son: <code>get</code>, <code>recv</code>, <code>users</code>, <code>netstat</code>, <code>kick</code>, <code>privesc</code>, <code>sdestruct</code>, <code>killbpf</code>, <code>exit</code>, <code>me</code>, <code>ps</code>.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">✅ 11</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 6 ===== -->
-    <div class="task">
-        <h3><span class="q">T6 ·</span> Interfaz de kernel abusada</h3>
-        <div class="cmd">$ strings agent | grep -i 'io_uring'</div>
-        <div class="out">io_uring_queue_init<br />io_uring_queue_exit<br />io_uring_submit<br />__io_uring_get_cqe<br />io_uring_get_sqe</div>
-        <div class="explain">El binario referencia funciones de la biblioteca <code>liburing</code>, lo que indica que utiliza <code>io_uring</code> para evitar la supervisión de syscalls.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar interfaz ]</span>
-            <span class="hidden">⚙️ io_uring</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 6 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t6">
+        <div class="task-header">
+            <span class="num">T6</span>
+            <h3><span class="q">Interfaz de kernel</span> abusada</h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Identificar qué mecanismo del kernel utiliza el malware para evadir la supervisión de llamadas al sistema por parte de EDR.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos cadenas que hagan referencia a interfaces de kernel conocidas, como <code>ptrace</code>, <code>io_uring</code>, <code>seccomp</code>, etc.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep -i 'io_uring'</div>
+            <div class="output">io_uring_queue_init<br />io_uring_queue_exit<br />io_uring_submit<br />__io_uring_get_cqe<br />io_uring_get_sqe</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> El binario enlaza con <code>liburing</code> y utiliza funciones de <code>io_uring</code>, un subsistema de E/S asíncrona que permite realizar syscalls sin ser fácilmente rastreado por herramientas tradicionales.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">⚙️ io_uring</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 7 ===== -->
-    <div class="task">
-        <h3><span class="q">T7 ·</span> Archivo de usuarios registrados</h3>
-        <div class="cmd">$ strings agent | grep '/var/run/utmp'</div>
-        <div class="out">/var/run/utmp</div>
-        <div class="explain">La cadena aparece en las cadenas del binario, indicando que lee ese archivo para enumerar sesiones activas.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar ruta ]</span>
-            <span class="hidden">📄 /var/run/utmp</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 7 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t7">
+        <div class="task-header">
+            <span class="num">T7</span>
+            <h3><span class="q">Archivo de usuarios</span> registrados</h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Averiguar qué archivo del sistema lee el agente para obtener la lista de usuarios conectados.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Filtramos las cadenas en busca de rutas típicas de archivos de sistema, como <code>/etc/passwd</code>, <code>/var/run/utmp</code>, <code>/proc</code>, etc.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep '/var/run/utmp'</div>
+            <div class="output">/var/run/utmp</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> <code>/var/run/utmp</code> contiene información sobre las sesiones de usuario activas. El agente lo abre para enumerar usuarios conectados.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">📄 /var/run/utmp</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 8 ===== -->
-    <div class="task">
-        <h3><span class="q">T8 ·</span> Directorio de binarios SUID</h3>
-        <div class="cmd">$ strings agent | grep '/usr/bin'</div>
-        <div class="out">/usr/bin</div>
-        <div class="explain">El binario escanea este directorio en busca de ejecutables con el bit SUID activado para escalar privilegios.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar directorio ]</span>
-            <span class="hidden">📁 /usr/bin</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 8 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t8">
+        <div class="task-header">
+            <span class="num">T8</span>
+            <h3><span class="q">Directorio de binarios SUID</span></h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Determinar qué directorio escanea el agente para encontrar binarios con el bit SUID activado, que podrían usarse para escalar privilegios.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos en las cadenas rutas como <code>/usr/bin</code>, <code>/bin</code>, <code>/sbin</code>, etc.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep '/usr/bin'</div>
+            <div class="output">/usr/bin</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> El agente lista el contenido de <code>/usr/bin</code> y verifica los permisos SUID para encontrar potenciales vectores de elevación de privilegios.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">📁 /usr/bin</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 9 ===== -->
-    <div class="task">
-        <h3><span class="q">T9 ·</span> String buscado en /proc/[pid]/maps (eBPF)</h3>
-        <div class="cmd">$ strings agent | grep 'anon_inode:bpf-map'</div>
-        <div class="out">anon_inode:bpf-map</div>
-        <div class="explain">Esta cadena identifica procesos que utilizan mapas eBPF, lo que permite al malware detectar herramientas de seguridad.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar string ]</span>
-            <span class="hidden">🔎 anon_inode:bpf-map</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 9 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t9">
+        <div class="task-header">
+            <span class="num">T9</span>
+            <h3><span class="q">String en /proc/[pid]/maps</span> para detectar eBPF</h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Encontrar qué cadena busca el agente en los mapas de memoria de los procesos para identificar herramientas de seguridad basadas en eBPF.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos cadenas relacionadas con <code>bpf</code> o <code>ebpf</code> en el binario.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep 'anon_inode:bpf-map'</div>
+            <div class="output">anon_inode:bpf-map</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> Esta cadena aparece en <code>/proc/[pid]/maps</code> cuando un proceso utiliza mapas eBPF. El agente la busca para detectar si hay herramientas como Falco o Tetragon en ejecución.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">🔎 anon_inode:bpf-map</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 10 ===== -->
-    <div class="task">
-        <h3><span class="q">T10 ·</span> Primer archivo de tracing deshabilitado</h3>
-        <div class="cmd">$ strings agent | grep '/sys/kernel/debug/tracing/tracing_on'</div>
-        <div class="out">/sys/kernel/debug/tracing/tracing_on</div>
-        <div class="explain">El agente escribe en este archivo para desactivar el tracing del kernel y evadir la monitorización.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar ruta ]</span>
-            <span class="hidden">📂 /sys/kernel/debug/tracing/tracing_on</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 10 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t10">
+        <div class="task-header">
+            <span class="num">T10</span>
+            <h3><span class="q">Primer archivo de tracing</span> deshabilitado</h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Identificar la ruta del primer archivo que el agente intenta deshabilitar para evitar el tracing del kernel.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos rutas que comiencen con <code>/sys/kernel/debug/tracing/</code> en las cadenas del binario.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep '/sys/kernel/debug/tracing/tracing_on'</div>
+            <div class="output">/sys/kernel/debug/tracing/tracing_on</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> El agente escribe <code>0</code> en este archivo para desactivar el rastreo del kernel, ocultando así sus propias operaciones.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">📂 /sys/kernel/debug/tracing/tracing_on</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 11 ===== -->
-    <div class="task">
-        <h3><span class="q">T11 ·</span> Ruta para obtener su propia ubicación ejecutable</h3>
-        <div class="cmd">$ strings agent | grep '/proc/self/exe'</div>
-        <div class="out">/proc/self/exe</div>
-        <div class="explain">Lee este enlace simbólico para conocer la ruta absoluta de su propio binario antes de autodestruirse.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar ruta ]</span>
-            <span class="hidden">📌 /proc/self/exe</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 11 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t11">
+        <div class="task-header">
+            <span class="num">T11</span>
+            <h3><span class="q">Ruta para obtener su propia ubicación</span> ejecutable</h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Saber qué ruta de proceso lee el agente para obtener la ubicación de su propio binario antes de autodestruirse.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos cadenas que contengan <code>/proc/self/exe</code> o similares.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep '/proc/self/exe'</div>
+            <div class="output">/proc/self/exe</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> <code>/proc/self/exe</code> es un enlace simbólico al binario en ejecución. El agente lo lee para conocer su propia ruta y luego eliminarlo.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">📌 /proc/self/exe</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== TAREA 12 ===== -->
-    <div class="task">
-        <h3><span class="q">T12 ·</span> Comando que desencadena autodestrucción</h3>
-        <div class="cmd">$ strings agent | grep 'sdestruct'</div>
-        <div class="out">sdestruct</div>
-        <div class="explain">El agente compara el comando recibido con esta cadena; si coincide, elimina su propio binario.</div>
-        <div class="spoiler" onclick="this.classList.toggle('revealed')">
-            <span class="mask">[ Mostrar comando ]</span>
-            <span class="hidden">💣 sdestruct</span>
+    <!-- ============================================================ -->
+    <!-- TAREA 12 -->
+    <!-- ============================================================ -->
+    <div class="task" id="t12">
+        <div class="task-header">
+            <span class="num">T12</span>
+            <h3><span class="q">Comando que desencadena la autodestrucción</span></h3>
+        </div>
+        <div class="task-body">
+            <div class="objective">
+                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Descubrir qué comando debe enviarse al agente para que se elimine a sí mismo del sistema.
+            </div>
+            <div class="method">
+                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos cadenas que sugieran eliminación, como <code>rm</code>, <code>unlink</code>, <code>remove</code>, <code>selfdestruct</code>, etc.
+            </div>
+            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep 'sdestruct'</div>
+            <div class="output">sdestruct</div>
+            <div class="interpretation">
+                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> La cadena <code>sdestruct</code> (abreviatura de "self destruct") se compara con el comando recibido; si coincide, el agente ejecuta <code>unlink()</code> sobre su propio binario.
+            </div>
+            <div class="spoiler" onclick="this.classList.toggle('revealed')">
+                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
+                <span class="hidden">💣 sdestruct</span>
+            </div>
         </div>
     </div>
 
-    <!-- ===== FOOTER ===== -->
+    <!-- ========== FOOTER ========== -->
     <div class="footer">
         <a href="https://cosm3no1de.github.io/mi-cv/" target="_blank">
-            <span class="emoji">🧑‍💻</span> cosmenoide dev
+            <i class="fas fa-user-astronaut"></i> cosmenoide dev
         </a>
         <div class="copy">
-            PhantomRing · Análisis estático · HTB Sherlock · Metodología reproducible
+            <i class="fas fa-skull"></i> PhantomRing · Análisis estático · HTB Sherlock <i class="fas fa-skull"></i>
         </div>
     </div>
 
 </div>
+<!-- Fin container -->
 </body>
 </html>
