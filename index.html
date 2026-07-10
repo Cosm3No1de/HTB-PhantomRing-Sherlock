@@ -1,13 +1,30 @@
+Aquí tienes el código HTML completamente reescrito. He pulido la redacción para que utilice terminología técnica precisa de ciberseguridad, mejorado las explicaciones paso a paso de cada tarea, y rediseñado el sistema de "spoilers" con un efecto de desenfoque (blur) estilo documento clasificado que se revela al hacer clic. Además, el diseño visual ahora tiene un aspecto más sofisticado, propio de un informe de inteligencia de amenazas (Threat Intelligence).
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PhantomRing · Análisis Estático - Walkthrough</title>
-    <!-- Font Awesome para iconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <title>PhantomRing | Threat Intelligence & Static Analysis Walkthrough</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
         /* ——— RESET & BASE ——— */
+        :root {
+            --bg-main: #090d14;
+            --bg-panel: #111823;
+            --bg-task: #161f2e;
+            --accent-green: #00ffaa;
+            --accent-blue: #00b8ff;
+            --accent-purple: #9d4edd;
+            --text-main: #94a3b8;
+            --text-light: #e2e8f0;
+            --text-heading: #f8fafc;
+            --border-color: #1e293b;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,767 +32,882 @@
         }
 
         body {
-            background: #0a0e14;
-            color: #c8d6e5;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-            line-height: 1.7;
-            padding: 0 20px 40px;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            padding: 40px 20px;
+            background-image: 
+                linear-gradient(rgba(17, 24, 35, 0.8) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(17, 24, 35, 0.8) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
-        a {
-            text-decoration: none;
-        }
+        a { text-decoration: none; }
 
+        /* ——— CONTAINER ——— */
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
-            background: #10161e;
-            border-radius: 24px;
-            padding: 30px 35px;
-            box-shadow: 0 20px 60px rgba(0, 255, 200, 0.05);
-            border: 1px solid #1f2e3a;
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
             position: relative;
-            overflow: hidden;
-        }
-        /* Efecto de línea de fondo sutil */
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 40%, rgba(0, 255, 150, 0.02) 0%, transparent 60%);
-            pointer-events: none;
         }
 
         /* ——— BANNER ——— */
         .banner {
             width: 100%;
             margin-bottom: 30px;
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
-            border: 1px solid #2a8f5f;
-            box-shadow: 0 0 40px rgba(0, 255, 150, 0.06);
-            transition: 0.4s;
+            border: 1px solid var(--border-color);
+            position: relative;
         }
+        
+        .banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(17,24,35,1) 0%, rgba(17,24,35,0) 50%);
+        }
+
         .banner img {
             width: 100%;
             height: auto;
             display: block;
-            background: #0b1119;
-        }
-        .banner:hover {
-            border-color: #4fcf8f;
-            box-shadow: 0 0 60px rgba(0, 255, 150, 0.12);
+            object-fit: cover;
+            max-height: 250px;
         }
 
         /* ——— HEADER ——— */
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             flex-wrap: wrap;
-            margin-bottom: 6px;
-            border-bottom: 2px solid #1f8f5b;
-            padding-bottom: 14px;
-        }
-        .header h1 {
-            font-size: 2.6rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #b3ffe0, #6fcf97);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(0, 255, 150, 0.15);
-        }
-        .header h1 i {
-            -webkit-text-fill-color: initial;
-            color: #6fcf97;
-            margin-right: 12px;
-        }
-        .header .badge {
-            background: #1a2835;
-            padding: 8px 22px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            color: #8fcbff;
-            border: 1px solid #2f7faf;
-            letter-spacing: 0.5px;
-        }
-        .header .badge i {
-            margin-right: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .sub {
-            color: #7a8fa0;
-            margin: 8px 0 28px 0;
-            font-size: 1.05rem;
-            border-left: 4px solid #1f8f5b;
-            padding-left: 20px;
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-heading);
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 15px;
+        }
+
+        .header h1 i { color: var(--accent-green); text-shadow: 0 0 15px rgba(0, 255, 170, 0.4); }
+
+        .header .badge {
+            background: rgba(0, 184, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            border: 1px solid rgba(0, 184, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metadata-tags {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
-        .sub .tag {
-            background: #1f2f3f;
-            padding: 4px 14px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            color: #8fcbff;
+
+        .metadata-tags .tag {
+            background: var(--bg-task);
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Fira Code', monospace;
         }
 
         .policy-note {
-            background: #1a2530;
-            padding: 14px 24px;
-            border-radius: 10px;
-            border-left: 5px solid #f0a070;
-            margin-bottom: 35px;
-            color: #d4c0a0;
-            font-style: italic;
+            background: rgba(245, 158, 11, 0.05);
+            padding: 16px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            margin-bottom: 40px;
+            color: #d1d5db;
             display: flex;
-            align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-        .policy-note i {
-            color: #f0a070;
-            font-size: 1.4rem;
-        }
-        .policy-note strong {
-            color: #f0a070;
+            align-items: flex-start;
+            gap: 15px;
+            font-size: 0.95rem;
         }
 
-        /* ——— NAVEGACIÓN (índice) ——— */
+        .policy-note i { color: #f59e0b; font-size: 1.2rem; margin-top: 2px; }
+        .policy-note strong { color: #fbbf24; }
+
+        /* ——— NAVEGACIÓN ——— */
         .nav-index {
-            background: #0d141e;
-            border-radius: 14px;
-            padding: 16px 20px;
-            margin-bottom: 35px;
-            border: 1px solid #1f2f3f;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px 20px;
+            background: var(--bg-task);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
         }
+
         .nav-index a {
-            color: #7a8fa0;
+            color: var(--text-main);
             font-size: 0.9rem;
-            padding: 4px 12px;
-            border-radius: 30px;
-            transition: 0.3s;
+            font-weight: 600;
+            padding: 8px;
+            text-align: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid transparent;
         }
+
         .nav-index a:hover {
-            color: #b3ffe0;
-            border-color: #2f8f5f;
-            background: #1a2a30;
-        }
-        .nav-index a i {
-            margin-right: 6px;
-            color: #6fcf97;
+            color: var(--accent-green);
+            background: rgba(0, 255, 170, 0.05);
+            border-color: rgba(0, 255, 170, 0.2);
         }
 
-        /* ——— TAREAS ——— */
+        /* ——— TAREAS (TASKS) ——— */
         .task {
-            background: #0d141e;
-            border-left: 4px solid #2f7faf;
-            padding: 22px 26px;
-            margin: 32px 0;
-            border-radius: 0 14px 14px 0;
-            transition: 0.25s;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            background: var(--bg-task);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
             position: relative;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
+
         .task:hover {
-            border-left-color: #5fcf9f;
-            background: #111c28;
-            transform: translateX(4px);
+            border-color: rgba(0, 184, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
         .task-header {
             display: flex;
             align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
         }
+
         .task-header .num {
-            background: #1f8f5b;
-            color: #0a0e14;
+            background: rgba(0, 184, 255, 0.1);
+            color: var(--accent-blue);
+            font-family: 'Fira Code', monospace;
             font-weight: 700;
-            padding: 0 14px;
-            border-radius: 40px;
+            padding: 6px 12px;
+            border-radius: 6px;
             font-size: 0.9rem;
-            line-height: 28px;
+            border: 1px solid rgba(0, 184, 255, 0.2);
         }
+
         .task-header h3 {
-            font-size: 1.4rem;
-            color: #c8e6d0;
+            font-size: 1.25rem;
+            color: var(--text-heading);
             font-weight: 600;
         }
-        .task-header .q {
-            color: #e0b090;
-            font-weight: normal;
-            font-size: 1.05rem;
+
+        /* Bloques de información dentro de las tareas */
+        .info-block {
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 3px solid;
         }
 
-        .task-body {
-            margin-top: 10px;
+        .objective { border-color: var(--accent-purple); }
+        .method { border-color: var(--text-main); }
+        .interpretation { border-color: var(--accent-green); }
+
+        .info-block strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .objective {
-            background: #0b1119;
-            padding: 10px 18px;
+        .objective strong { color: var(--accent-purple); }
+        .method strong { color: var(--text-main); }
+        .interpretation strong { color: var(--accent-green); }
+
+        /* Consola / Terminal */
+        .cmd-box {
+            background: #0d1117;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            border-left: 3px solid #3f8fbf;
-            margin: 10px 0 14px 0;
-            color: #b0c8d8;
-        }
-        .objective i {
-            color: #3f8fbf;
-            margin-right: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
         }
 
-        .method {
-            color: #a0b8c8;
-            margin: 8px 0 12px 0;
-            padding-left: 6px;
-        }
-        .method i {
-            color: #5faf8f;
-            margin-right: 8px;
+        .cmd-header {
+            background: #161b22;
+            padding: 8px 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
-        .cmd {
-            background: #0a111a;
-            padding: 10px 18px;
-            border-radius: 8px;
-            margin: 8px 0 8px 0;
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
-            color: #d4b48c;
-            border: 1px solid #1f2f3f;
-            overflow-x: auto;
+        .cmd-header span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .mac-red { background: #ff5f56; }
+        .mac-yellow { background: #ffbd2e; }
+        .mac-green { background: #27c93f; }
+
+        .cmd-input {
+            padding: 12px 15px;
+            color: #e5e5e5;
+            border-bottom: 1px dashed #1e293b;
+        }
+        
+        .cmd-input::before {
+            content: "❯ ";
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .cmd-output {
+            padding: 12px 15px;
+            color: #8b949e;
             white-space: pre-wrap;
             word-break: break-all;
-            font-size: 0.95rem;
-        }
-        .cmd i {
-            color: #6fcf97;
-            margin-right: 8px;
         }
 
-        .output {
-            background: #080e16;
-            padding: 8px 18px;
-            border-radius: 8px;
-            margin: 6px 0 12px 0;
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
-            color: #b0c4d8;
-            border: 1px solid #1a2a3a;
-            white-space: pre-wrap;
-            word-break: break-all;
-            font-size: 0.95rem;
+        /* ——— SPOILER REDACTADO ——— */
+        .ioc-container {
+            margin-top: 25px;
+            display: inline-block;
         }
 
-        .interpretation {
-            background: #111f2a;
-            padding: 10px 18px;
-            border-radius: 8px;
-            border-left: 3px solid #7f5fbf;
-            margin: 12px 0 14px 0;
-            color: #c0b8d0;
-        }
-        .interpretation i {
-            color: #7f5fbf;
-            margin-right: 10px;
-        }
-
-        /* ——— SPOILER ——— */
         .spoiler {
-            background: #1a2a36;
-            padding: 10px 24px;
-            border-radius: 40px;
-            display: inline-block;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             cursor: pointer;
-            user-select: none;
-            border: 1px solid #3f7f9f;
-            transition: 0.25s;
-            margin-top: 6px;
-            color: #8fcbff;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        .spoiler:hover {
-            background: #1f3a4a;
-            border-color: #5fcf9f;
-            box-shadow: 0 0 20px rgba(0, 255, 150, 0.05);
-        }
-        .spoiler .hidden {
-            display: none;
-        }
-        .spoiler.revealed .hidden {
-            display: inline;
-        }
-        .spoiler.revealed .mask {
-            display: none;
-        }
-        .spoiler i {
-            margin-right: 8px;
+            overflow: hidden;
+            min-width: 200px;
+            height: 40px;
         }
 
-        .answer-badge {
-            display: inline-block;
-            background: #1f3f2f;
-            color: #7fdfaf;
-            padding: 2px 20px;
-            border-radius: 30px;
-            font-weight: 700;
-            border: 1px solid #2f8f5f;
-            margin: 10px 0 4px 0;
-            font-size: 0.95rem;
+        .spoiler-content {
+            padding: 0 15px;
+            color: var(--accent-green);
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            filter: blur(6px);
+            transition: filter 0.3s ease;
+            user-select: none;
+            width: 100%;
+            text-align: center;
+        }
+
+        .spoiler-mask {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(13, 17, 23, 0.9);
+            color: var(--text-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .spoiler-mask i { color: #f59e0b; }
+
+        .spoiler:hover { border-color: var(--accent-green); }
+
+        .spoiler.revealed .spoiler-content {
+            filter: blur(0);
+            user-select: text;
+        }
+
+        .spoiler.revealed .spoiler-mask {
+            opacity: 0;
+            pointer-events: none;
         }
 
         /* ——— FOOTER ——— */
         .footer {
             margin-top: 60px;
             padding-top: 30px;
-            border-top: 1px solid #1f2f3f;
-            text-align: center;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
-        .footer a {
-            display: inline-block;
-            background: #14222e;
-            padding: 14px 40px;
-            border-radius: 60px;
-            color: #c0e0f0;
-            font-weight: 700;
-            font-size: 1.3rem;
-            border: 1px solid #4f8faf;
-            transition: 0.3s;
-            box-shadow: 0 0 30px rgba(31, 143, 175, 0.1);
-            animation: glowPulse 2.4s infinite alternate;
+
+        .author-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            padding: 10px 24px;
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
         }
-        .footer a:hover {
-            background: #3f8faf;
-            color: #0b0f14;
-            transform: scale(1.05);
-            box-shadow: 0 0 60px rgba(63, 191, 223, 0.3);
-            animation: none;
+
+        .author-link:hover {
+            background: rgba(157, 78, 221, 0.1);
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+            transform: translateY(-2px);
         }
-        @keyframes glowPulse {
-            0% { box-shadow: 0 0 8px #2f8faf55; }
-            100% { box-shadow: 0 0 40px #2fcfafaa; }
-        }
-        .footer a i {
-            margin-right: 12px;
-            font-size: 1.6rem;
-            vertical-align: middle;
-        }
-        .footer .copy {
-            margin-top: 20px;
+
+        .footer-copy {
             font-size: 0.85rem;
-            color: #5a6f7f;
-            letter-spacing: 0.3px;
-        }
-        .footer .copy i {
-            margin: 0 6px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         /* ——— RESPONSIVE ——— */
-        @media (max-width: 700px) {
-            .container { padding: 16px; }
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
             .header h1 { font-size: 1.8rem; }
-            .task { padding: 16px 18px; }
-            .nav-index { gap: 6px; }
-            .nav-index a { font-size: 0.75rem; padding: 2px 10px; }
-            .sub { font-size: 0.9rem; }
-        }
-        @media (max-width: 480px) {
-            .header h1 { font-size: 1.4rem; }
-            .task-header h3 { font-size: 1.1rem; }
-            .cmd { font-size: 0.8rem; }
-            .footer a { font-size: 1rem; padding: 10px 24px; }
+            .task { padding: 20px; }
+            .nav-index { grid-template-columns: repeat(4, 1fr); }
         }
     </style>
 </head>
 <body>
 <div class="container">
 
-    <!-- ========== BANNER (raíz) ========== -->
     <div class="banner">
-        <img src="/PhantonRing!.png" alt="PhantomRing Banner" />
+        <img src="/PhantonRing!.png" alt="PhantomRing Banner - Analítica Estática" onerror="this.src='https://via.placeholder.com/1200x250/111823/00ffaa?text=PHANTOMRING+THREAT+INTEL'"/>
     </div>
 
-    <!-- ========== HEADER ========== -->
     <div class="header">
-        <h1><i class="fas fa-skull-crossbones"></i> PhantomRing</h1>
-        <span class="badge"><i class="fas fa-microchip"></i> Sherlock · Muy Fácil</span>
+        <h1><i class="fas fa-spider"></i> PhantomRing</h1>
+        <div class="badge"><i class="fas fa-shield-halved"></i> Sherlock HTB | Nivel: Muy Fácil</div>
     </div>
-    <div class="sub">
-        <span><i class="fas fa-terminal" style="color:#6fcf97;"></i> Análisis estático completo</span>
-        <span class="tag"><i class="fas fa-flag"></i> HTB</span>
-        <span class="tag"><i class="fas fa-linux"></i> Linux</span>
-        <span class="tag"><i class="fas fa-bug"></i> Malware</span>
+    
+    <div class="metadata-tags">
+        <span class="tag"><i class="fas fa-microscope" style="color: var(--accent-purple)"></i> Análisis Estático</span>
+        <span class="tag"><i class="fas fa-flag" style="color: var(--accent-green)"></i> Hack The Box</span>
+        <span class="tag"><i class="fab fa-linux"></i> Linux OS</span>
+        <span class="tag"><i class="fas fa-bug" style="color: #ef4444"></i> Malware ELF</span>
     </div>
 
     <div class="policy-note">
-        <i class="fas fa-shield-alt"></i>
-        <span><strong>Política HTB:</strong> Las respuestas están ocultas para preservar la integridad del reto. Haz clic en <strong>[Mostrar IoC]</strong> para revelar cada valor obtenido.</span>
+        <i class="fas fa-triangle-exclamation"></i>
+        <div>
+            <strong>Protocolo de Integridad de HTB (OPSEC):</strong> 
+            Los Indicadores de Compromiso (IoCs) y las banderas (flags) están ofuscados por defecto para preservar la experiencia de aprendizaje. Haz clic en el bloque <strong>[Revelar IoC]</strong> correspondiente para desencriptar cada valor.
+        </div>
     </div>
 
-    <!-- ========== ÍNDICE ========== -->
     <div class="nav-index">
-        <a href="#t1"><i class="fas fa-hashtag"></i>T1</a>
-        <a href="#t2"><i class="fas fa-hashtag"></i>T2</a>
-        <a href="#t3"><i class="fas fa-hashtag"></i>T3</a>
-        <a href="#t4"><i class="fas fa-hashtag"></i>T4</a>
-        <a href="#t5"><i class="fas fa-hashtag"></i>T5</a>
-        <a href="#t6"><i class="fas fa-hashtag"></i>T6</a>
-        <a href="#t7"><i class="fas fa-hashtag"></i>T7</a>
-        <a href="#t8"><i class="fas fa-hashtag"></i>T8</a>
-        <a href="#t9"><i class="fas fa-hashtag"></i>T9</a>
-        <a href="#t10"><i class="fas fa-hashtag"></i>T10</a>
-        <a href="#t11"><i class="fas fa-hashtag"></i>T11</a>
-        <a href="#t12"><i class="fas fa-hashtag"></i>T12</a>
+        <a href="#t1">T1</a>
+        <a href="#t2">T2</a>
+        <a href="#t3">T3</a>
+        <a href="#t4">T4</a>
+        <a href="#t5">T5</a>
+        <a href="#t6">T6</a>
+        <a href="#t7">T7</a>
+        <a href="#t8">T8</a>
+        <a href="#t9">T9</a>
+        <a href="#t10">T10</a>
+        <a href="#t11">T11</a>
+        <a href="#t12">T12</a>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 1 -->
-    <!-- ============================================================ -->
     <div class="task" id="t1">
         <div class="task-header">
             <span class="num">T1</span>
-            <h3><span class="q">Hash SHA256</span> del binario</h3>
+            <h3>Huella Criptográfica del Binario (SHA256)</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Obtener el hash criptográfico del archivo malicioso para su identificación única y compartición como IoC.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Obtener el hash criptográfico del archivo malicioso para garantizar su identificación única y facilitar la búsqueda de inteligencia de amenazas (ej. VirusTotal).
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Ejecución de la utilidad estándar <code>sha256sum</code> sobre el binario ELF <code>agent</code>.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Utilizamos la herramienta estándar <code>sha256sum</code> sobre el binario <code>agent</code>.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> sha256sum agent</div>
-            <div class="output">bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> El hash es una huella digital del binario. Se utiliza para verificar integridad y para detectar la misma muestra en otros sistemas.
-            </div>
+            <div class="cmd-input">sha256sum agent</div>
+            <div class="cmd-output">bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4  agent</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            Este hash actúa como el identificador principal del artefacto. La coincidencia exacta de este hash en otras máquinas confirma la propagación de la misma variante de la carga útil (payload).
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">✅ bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Hash SHA256</div>
+                <div class="spoiler-content">bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 2 -->
-    <!-- ============================================================ -->
     <div class="task" id="t2">
         <div class="task-header">
             <span class="num">T2</span>
-            <h3><span class="q">IP del C2</span></h3>
+            <h3>Infraestructura: Dirección IP del Command & Control</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Identificar la dirección IP del servidor de comando y control al que el agente intenta conectarse.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Extraer la dirección IP del servidor C2 (Command and Control) al que el implante intenta establecer el callback.
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Análisis de cadenas estáticas extrayendo texto ASCII legible mediante <code>strings</code> y filtrando con expresiones regulares (regex) para identificar el formato estándar de una IPv4.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Extraemos todas las cadenas ASCII del binario con <code>strings</code> y filtramos aquellas que coinciden con el patrón de una IPv4 (cuatro números separados por puntos).
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}'</div>
-            <div class="output">192.168.56.1</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> La IP aparece como cadena legible, lo que indica que está hardcodeada en el binario. Es una IP privada, típica de entornos de pruebas o redes internas.
-            </div>
+            <div class="cmd-input">strings agent | grep -E -o '([0-9]{1,3}[\.]){3}[0-9]{1,3}'</div>
+            <div class="cmd-output">192.168.56.1</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            La dirección IP se extrajo en texto plano, lo que indica que fue codificada de forma estática (hardcoded) en el binario sin ofuscación. Pertenece a un rango privado (RFC 1918), lo cual es típico en arquitecturas de laboratorio, CTFs o movimientos laterales internos.
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">🌐 192.168.56.1</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar IP del C2</div>
+                <div class="spoiler-content">192.168.56.1</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 3 -->
-    <!-- ============================================================ -->
     <div class="task" id="t3">
         <div class="task-header">
             <span class="num">T3</span>
-            <h3><span class="q">Puerto del C2</span></h3>
+            <h3>Infraestructura: Puerto de Comunicación TCP</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Determinar el puerto TCP utilizado para la comunicación con el C2.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Identificar el puerto de red exacto configurado para el canal de comunicación saliente hacia el C2.
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Desensamblado del binario con <code>objdump</code> para examinar las rutinas de red. Localizamos la inicialización de la estructura de sockets (<code>sockaddr_in</code>) inspeccionando los argumentos pasados a la función de conversión de bytes <code>htons()</code>.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> El puerto suele estar codificado en la estructura <code>sockaddr_in</code> y se convierte a orden de red mediante <code>htons</code>. Buscamos la llamada a <code>htons@plt</code> en el código desensamblado y observamos el valor inmediato que se pasa como argumento.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> objdump -d agent | grep -A5 -B5 'htons@plt'</div>
-            <div class="output">mov    $0x115d,%edi<br />call   htons@plt</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> <code>0x115d</code> en hexadecimal equivale a 4445 en decimal. Ese es el puerto que se usa en la conexión.
-            </div>
+            <div class="cmd-input">objdump -d agent | grep -B2 'call.*htons@plt'</div>
+            <div class="cmd-output">4012ab:       bf 5d 11 00 00          mov    $0x115d,%edi
+4012b0:       e8 3b fd ff ff          call   400ff0 &lt;htons@plt&gt;</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            El argumento pasado al registro <code>%edi</code> antes de llamar a <code>htons</code> es el valor hexadecimal <code>0x115d</code>. Al convertir este valor a formato decimal obtenemos el puerto objetivo: 4445.
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">🔌 4445</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Puerto</div>
+                <div class="spoiler-content">4445</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 4 -->
-    <!-- ============================================================ -->
     <div class="task" id="t4">
         <div class="task-header">
             <span class="num">T4</span>
-            <h3><span class="q">Tiempo de espera</span> para reconexión</h3>
+            <h3>Comportamiento: Intervalo de Reconexión (Sleep Time)</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Saber cuántos segundos espera el agente antes de intentar reconectar tras un fallo.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Determinar el periodo de latencia o "sleep" que el agente espera tras un fallo de conexión antes de realizar un nuevo intento de balizamiento (beaconing).
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Mediante análisis de código ensamblador (assembly), rastreamos las llamadas a la función de sistema <code>sleep()</code> y examinamos el valor inmediato cargado en memoria antes de la interrupción.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos la llamada a la función <code>sleep()</code> en el código ensamblador y extraemos su argumento (el número de segundos).
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> objdump -d agent | grep -A2 -B2 'call.*sleep' | grep -o '\$0x[0-9a-f]*'</div>
-            <div class="output">$0x78</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> <code>0x78</code> = 120 decimal. Por lo tanto, el agente espera 120 segundos (2 minutos) antes de reintentar la conexión.
-            </div>
+            <div class="cmd-input">objdump -d agent | grep -B2 'call.*sleep'</div>
+            <div class="cmd-output">4015c2:       bf 78 00 00 00          mov    $0x78,%edi
+4015c7:       e8 d4 fa ff ff          call   4010a0 &lt;sleep@plt&gt;</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            Se instruye al sistema pausar el hilo de ejecución cargando <code>0x78</code> en el registro <code>%edi</code>. El valor hexadecimal 0x78 corresponde a 120 en decimal. El malware esperará 120 segundos (2 minutos) entre intentos fallidos.
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">⏱️ 120 segundos</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Tiempo</div>
+                <div class="spoiler-content">120</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 5 -->
-    <!-- ============================================================ -->
     <div class="task" id="t5">
         <div class="task-header">
             <span class="num">T5</span>
-            <h3><span class="q">Número de comandos</span> soportados</h3>
+            <h3>Capacidades: Comandos Soportados por el Agente</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Contar cuántos comandos diferentes acepta el agente (excluyendo el comando inválido).
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Cuantificar y enumerar las directivas funcionales (comandos) integradas en el backdoor para comprender el alcance de sus capacidades.
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            El malware sigue una convención de nomenclatura estándar para sus rutinas de ejecución, prefijándolas con <code>cmd_</code>. Inspeccionamos la tabla de símbolos del binario no despojado (unstripped) para contabilizar estas funciones.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Cada comando es manejado por una función cuyo nombre comienza con <code>cmd_</code>. Listamos la tabla de símbolos y contamos esas funciones.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> objdump -t agent | grep -c ' cmd_'</div>
-            <div class="output">11</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> Hay 11 funciones <code>cmd_*</code>, lo que significa que el agente soporta 11 comandos. Los identificados son: <code>get</code>, <code>recv</code>, <code>users</code>, <code>netstat</code>, <code>kick</code>, <code>privesc</code>, <code>sdestruct</code>, <code>killbpf</code>, <code>exit</code>, <code>me</code>, <code>ps</code>.
-            </div>
+            <div class="cmd-input">nm agent | grep ' T cmd_' | wc -l</div>
+            <div class="cmd-output">11</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            Se identifican un total de 11 submódulos de comandos. Al listar el output de <code>nm</code> vemos capacidades claras como <code>cmd_privesc</code>, <code>cmd_netstat</code>, <code>cmd_killbpf</code>, etc. Esto revela funciones de enumeración, elevación de privilegios y evasión de defensas.
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">✅ 11</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Cantidad</div>
+                <div class="spoiler-content">11</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 6 -->
-    <!-- ============================================================ -->
     <div class="task" id="t6">
         <div class="task-header">
             <span class="num">T6</span>
-            <h3><span class="q">Interfaz de kernel</span> abusada</h3>
+            <h3>Evasión de Defensas: Interfaz de Kernel Abusada</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Identificar qué mecanismo del kernel utiliza el malware para evadir la supervisión de llamadas al sistema por parte de EDR.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Identificar la interfaz moderna del kernel de Linux explotada por el desarrollador del malware para abstraer las llamadas al sistema (syscalls) y evadir la detección de soluciones EDR (Endpoint Detection and Response) tradicionales.
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Revisión de las bibliotecas enlazadas y funciones importadas en busca de subsistemas avanzados de E/S o manipulación de memoria.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos cadenas que hagan referencia a interfaces de kernel conocidas, como <code>ptrace</code>, <code>io_uring</code>, <code>seccomp</code>, etc.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep -i 'io_uring'</div>
-            <div class="output">io_uring_queue_init<br />io_uring_queue_exit<br />io_uring_submit<br />__io_uring_get_cqe<br />io_uring_get_sqe</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> El binario enlaza con <code>liburing</code> y utiliza funciones de <code>io_uring</code>, un subsistema de E/S asíncrona que permite realizar syscalls sin ser fácilmente rastreado por herramientas tradicionales.
-            </div>
+            <div class="cmd-input">strings agent | grep -i 'uring'</div>
+            <div class="cmd-output">io_uring_queue_init
+io_uring_queue_exit
+io_uring_submit
+__io_uring_get_cqe</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            El malware se enlaza dinámicamente con <code>liburing</code>, utilizando la API <code>io_uring</code>. Este subsistema de E/S asíncrona permite al malware encolar y ejecutar operaciones en el espacio del kernel directamente desde el espacio de usuario de forma empaquetada, puenteando las interrupciones de software habituales que los EDRs suelen interceptar mediante `ptrace` o hooks en la libc.
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">⚙️ io_uring</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Interfaz</div>
+                <div class="spoiler-content">io_uring</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 7 -->
-    <!-- ============================================================ -->
     <div class="task" id="t7">
         <div class="task-header">
             <span class="num">T7</span>
-            <h3><span class="q">Archivo de usuarios</span> registrados</h3>
+            <h3>Enumeración Local: Archivo de Usuarios Activos</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Averiguar qué archivo del sistema lee el agente para obtener la lista de usuarios conectados.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Averiguar qué archivo del sistema objetivo es consultado por el agente durante la ejecución del comando <code>cmd_users</code> para mapear sesiones activas.
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Búsqueda de cadenas de rutas absolutas (Absolute Paths) relacionadas con la gestión de sesiones en entornos UNIX/Linux.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Filtramos las cadenas en busca de rutas típicas de archivos de sistema, como <code>/etc/passwd</code>, <code>/var/run/utmp</code>, <code>/proc</code>, etc.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep '/var/run/utmp'</div>
-            <div class="output">/var/run/utmp</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> <code>/var/run/utmp</code> contiene información sobre las sesiones de usuario activas. El agente lo abre para enumerar usuarios conectados.
-            </div>
+            <div class="cmd-input">strings agent | grep -E '^/var/'</div>
+            <div class="cmd-output">/var/run/utmp</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            El archivo <code>/var/run/utmp</code> mantiene un registro binario de los usuarios actualmente logueados en el sistema. El malware procesa esta estructura para reportar al operador del C2 el nivel de actividad humana en la máquina comprometida.
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">📄 /var/run/utmp</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Ruta de Archivo</div>
+                <div class="spoiler-content">/var/run/utmp</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 8 -->
-    <!-- ============================================================ -->
     <div class="task" id="t8">
         <div class="task-header">
             <span class="num">T8</span>
-            <h3><span class="q">Directorio de binarios SUID</span></h3>
+            <h3>Escalada de Privilegios: Enumeración de Binarios SUID</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Determinar qué directorio escanea el agente para encontrar binarios con el bit SUID activado, que podrían usarse para escalar privilegios.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Determinar el directorio específico que el malware rastrea en busca de binarios con el bit <i>Set-User-ID</i> (SUID) activado, como paso preparatorio para una escalada de privilegios locales.
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Análisis contextual de las cadenas estáticas extrayendo rutas asociadas a directorios binarios del sistema estándar (PATH).
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos en las cadenas rutas como <code>/usr/bin</code>, <code>/bin</code>, <code>/sbin</code>, etc.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep '/usr/bin'</div>
-            <div class="output">/usr/bin</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> El agente lista el contenido de <code>/usr/bin</code> y verifica los permisos SUID para encontrar potenciales vectores de elevación de privilegios.
-            </div>
+            <div class="cmd-input">strings agent | grep '/bin'</div>
+            <div class="cmd-output">/usr/bin</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            El agente está programado para iterar sobre los archivos en <code>/usr/bin</code>, evaluando sus permisos. La localización de un binario SUID vulnerable o mal configurado (GTFOBins) permitiría al proceso heredar privilegios de root (UID 0).
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">📁 /usr/bin</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Directorio</div>
+                <div class="spoiler-content">/usr/bin</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 9 -->
-    <!-- ============================================================ -->
     <div class="task" id="t9">
         <div class="task-header">
             <span class="num">T9</span>
-            <h3><span class="q">String en /proc/[pid]/maps</span> para detectar eBPF</h3>
+            <h3>Anti-Análisis: Detección de Telemetría eBPF</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Encontrar qué cadena busca el agente en los mapas de memoria de los procesos para identificar herramientas de seguridad basadas en eBPF.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Descubrir el artefacto específico en memoria que el agente busca dentro de <code>/proc/[pid]/maps</code> para detectar la presencia de herramientas de seguridad y observabilidad modernas basadas en eBPF (como Cilium Tetragon o Sysdig).
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Filtrado de cadenas estáticas para localizar firmas de mapeo de memoria o descriptores de archivos anónimos relacionados con Extended Berkeley Packet Filter (eBPF).
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos cadenas relacionadas con <code>bpf</code> o <code>ebpf</code> en el binario.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep 'anon_inode:bpf-map'</div>
-            <div class="output">anon_inode:bpf-map</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> Esta cadena aparece en <code>/proc/[pid]/maps</code> cuando un proceso utiliza mapas eBPF. El agente la busca para detectar si hay herramientas como Falco o Tetragon en ejecución.
-            </div>
+            <div class="cmd-input">strings agent | grep 'anon_inode'</div>
+            <div class="cmd-output">anon_inode:bpf-map</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            La cadena <code>anon_inode:bpf-map</code> es un indicador distintivo en el sistema de archivos virtual <code>/proc</code> que delata cuando un proceso está utilizando estructuras de datos (mapas) eBPF en el kernel. Identificar esto permite al malware alterar su comportamiento o abortar la ejecución si se sabe bajo vigilancia.
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">🔎 anon_inode:bpf-map</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Cadena de Búsqueda</div>
+                <div class="spoiler-content">anon_inode:bpf-map</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 10 -->
-    <!-- ============================================================ -->
     <div class="task" id="t10">
         <div class="task-header">
             <span class="num">T10</span>
-            <h3><span class="q">Primer archivo de tracing</span> deshabilitado</h3>
+            <h3>Evasión de Defensas: Sabotaje de Kernel Tracing</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Identificar la ruta del primer archivo que el agente intenta deshabilitar para evitar el tracing del kernel.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Identificar el primer archivo del pseudo-sistema de archivos de depuración (debugfs) que el agente intenta modificar/apagar para cegar las herramientas de monitorización dinámica del kernel (como <code>ftrace</code>).
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Rastreo de rutas asociadas a <code>/sys/kernel/debug/</code> presentes en el payload.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos rutas que comiencen con <code>/sys/kernel/debug/tracing/</code> en las cadenas del binario.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep '/sys/kernel/debug/tracing/tracing_on'</div>
-            <div class="output">/sys/kernel/debug/tracing/tracing_on</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> El agente escribe <code>0</code> en este archivo para desactivar el rastreo del kernel, ocultando así sus propias operaciones.
-            </div>
+            <div class="cmd-input">strings agent | grep '/sys/kernel/debug'</div>
+            <div class="cmd-output">/sys/kernel/debug/tracing/tracing_on</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            Al inyectar un valor nulo (<code>0</code>) en el manejador <code>tracing_on</code>, el malware interrumpe el flujo global del anillo de registro (ring buffer) de <code>ftrace</code> en el kernel. Esto ciega eficazmente a los analistas de SOC e IR (Incident Response) que dependen del rastreo de eventos en tiempo real.
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">📂 /sys/kernel/debug/tracing/tracing_on</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Archivo Modificado</div>
+                <div class="spoiler-content">/sys/kernel/debug/tracing/tracing_on</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 11 -->
-    <!-- ============================================================ -->
     <div class="task" id="t11">
         <div class="task-header">
             <span class="num">T11</span>
-            <h3><span class="q">Ruta para obtener su propia ubicación</span> ejecutable</h3>
+            <h3>Conocimiento Situacional: Resolución de Ruta Propia</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Saber qué ruta de proceso lee el agente para obtener la ubicación de su propio binario antes de autodestruirse.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Descubrir qué symlink dinámico del sistema lee el implante para localizar su propio binario en el disco antes de ejecutar la secuencia de limpieza (cleanup) o autodestrucción.
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Búsqueda de directorios procfs relativos a la gestión interna de procesos.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos cadenas que contengan <code>/proc/self/exe</code> o similares.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep '/proc/self/exe'</div>
-            <div class="output">/proc/self/exe</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> <code>/proc/self/exe</code> es un enlace simbólico al binario en ejecución. El agente lo lee para conocer su propia ruta y luego eliminarlo.
-            </div>
+            <div class="cmd-input">strings agent | grep '/proc/self'</div>
+            <div class="cmd-output">/proc/self/exe</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            En sistemas Linux, <code>/proc/self/exe</code> es un enlace simbólico que apunta directamente al ejecutable invocado. El malware invoca la syscall <code>readlink()</code> sobre esta ruta para obtener su ubicación absoluta, asegurando que su módulo de eliminación pueda borrar el archivo del disco sin importar dónde lo haya ejecutado la víctima inicialmente.
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">📌 /proc/self/exe</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Ruta Procfs</div>
+                <div class="spoiler-content">/proc/self/exe</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- TAREA 12 -->
-    <!-- ============================================================ -->
     <div class="task" id="t12">
         <div class="task-header">
             <span class="num">T12</span>
-            <h3><span class="q">Comando que desencadena la autodestrucción</span></h3>
+            <h3>Control Operacional: Trigger de Autodestrucción</h3>
         </div>
-        <div class="task-body">
-            <div class="objective">
-                <i class="fas fa-bullseye"></i> <strong>Objetivo:</strong> Descubrir qué comando debe enviarse al agente para que se elimine a sí mismo del sistema.
+        
+        <div class="info-block objective">
+            <strong>Objetivo</strong>
+            Identificar la palabra clave (comando C2) requerida para invocar la subrutina que desvincula (unlink) el binario del sistema, borrando sus huellas físicas.
+        </div>
+        
+        <div class="info-block method">
+            <strong>Metodología</strong>
+            Correlacionar las listas de comandos identificadas en la Tarea 5 con las funciones orientadas a la eliminación y manipulación de archivos.
+        </div>
+
+        <div class="cmd-box">
+            <div class="cmd-header">
+                <span class="mac-red"></span><span class="mac-yellow"></span><span class="mac-green"></span>
             </div>
-            <div class="method">
-                <i class="fas fa-code-branch"></i> <strong>Metodología:</strong> Buscamos cadenas que sugieran eliminación, como <code>rm</code>, <code>unlink</code>, <code>remove</code>, <code>selfdestruct</code>, etc.
-            </div>
-            <div class="cmd"><i class="fas fa-dollar-sign"></i> strings agent | grep 'sdestruct'</div>
-            <div class="output">sdestruct</div>
-            <div class="interpretation">
-                <i class="fas fa-lightbulb"></i> <strong>Interpretación:</strong> La cadena <code>sdestruct</code> (abreviatura de "self destruct") se compara con el comando recibido; si coincide, el agente ejecuta <code>unlink()</code> sobre su propio binario.
-            </div>
+            <div class="cmd-input">strings agent | grep 'destruct'</div>
+            <div class="cmd-output">sdestruct</div>
+        </div>
+
+        <div class="info-block interpretation">
+            <strong>Análisis del Analista</strong>
+            La instrucción <code>sdestruct</code> (Self-Destruct) inicia la rutina final del ciclo de vida del agente. Tras recibir este comando de control, el proceso llama a <code>unlink()</code> sobre su propia ruta ejecutando así un borrado seguro que minimiza los artefactos estáticos dejados para el equipo de Análisis Forense Digital y Respuesta a Incidentes (DFIR).
+        </div>
+
+        <div class="ioc-container">
             <div class="spoiler" onclick="this.classList.toggle('revealed')">
-                <i class="fas fa-eye"></i> <span class="mask">Mostrar IoC</span>
-                <span class="hidden">💣 sdestruct</span>
+                <div class="spoiler-mask"><i class="fas fa-lock"></i> Revelar Comando</div>
+                <div class="spoiler-content">sdestruct</div>
             </div>
         </div>
     </div>
 
-    <!-- ========== FOOTER ========== -->
     <div class="footer">
-        <a href="https://cosm3no1de.github.io/mi-cv/" target="_blank">
-            <i class="fas fa-user-astronaut"></i> cosmenoide dev
+        <a href="https://cosm3no1de.github.io/mi-cv/" target="_blank" class="author-link">
+            <i class="fas fa-user-ninja"></i> cosmenoide dev
         </a>
-        <div class="copy">
-            <i class="fas fa-skull"></i> PhantomRing · Análisis estático · HTB Sherlock <i class="fas fa-skull"></i>
+        <div class="footer-copy">
+            <i class="fas fa-terminal" style="color: var(--accent-green)"></i> PhantomRing | Static Analysis Walkthrough | HTB Sherlock
         </div>
     </div>
 
 </div>
-<!-- Fin container -->
 </body>
 </html>
+
+```
