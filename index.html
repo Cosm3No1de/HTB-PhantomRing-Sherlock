@@ -82,6 +82,19 @@
             padding-left: 18px;
         }
 
+        .policy-note {
+            background: #1f2a3a;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #f0a070;
+            margin-bottom: 30px;
+            color: #d4c0a0;
+            font-style: italic;
+        }
+        .policy-note strong {
+            color: #f0a070;
+        }
+
         /* ——— TASKS ——— */
         .task {
             background: #0d1219;
@@ -132,6 +145,14 @@
             border: 1px solid #1f2f3f;
             white-space: pre-wrap;
             word-break: break-all;
+        }
+
+        .explain {
+            color: #b0c0d0;
+            margin: 8px 0 12px 0;
+            padding-left: 4px;
+            border-left: 2px solid #3f6f8f;
+            padding-left: 14px;
         }
 
         .spoiler {
@@ -236,7 +257,7 @@
 <body>
 <div class="container">
 
-    <!-- BANNER (raíz) -->
+    <!-- BANNER (raíz del repositorio) -->
     <div class="banner">
         <img src="/PhantonRing!.png" alt="PhantomRing Banner" />
     </div>
@@ -247,7 +268,12 @@
         <span class="badge">#Sherlock · Muy Fácil</span>
     </div>
     <div class="sub">
-        Análisis estático completo · Metodología paso a paso · <span style="color:#5fcf9f;">IoCs ocultos</span>
+        Análisis estático completo · Metodología paso a paso · <span style="color:#5fcf9f;">IoCs bajo spoiler</span>
+    </div>
+
+    <div class="policy-note">
+        ⚠️ <strong>Política HTB:</strong> Las respuestas están ocultas para preservar la integridad del reto.
+        Haz clic en cada botón <strong>[Mostrar respuesta]</strong> para revelar el valor obtenido.
     </div>
 
     <!-- ===== TAREA 1 ===== -->
@@ -255,7 +281,7 @@
         <h3><span class="q">T1 ·</span> Hash SHA256 del binario</h3>
         <div class="cmd">$ sha256sum agent</div>
         <div class="out">bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4</div>
-        <div class="note">🔍 El hash se obtiene directamente del binario entregado.</div>
+        <div class="explain">El hash se obtiene directamente del binario. Es único para esta muestra.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar respuesta ]</span>
             <span class="hidden">✅ bfc3a8f5d4e2c1b9a0f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4</span>
@@ -267,6 +293,7 @@
         <h3><span class="q">T2 ·</span> IP del C2</h3>
         <div class="cmd">$ strings agent | grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}'</div>
         <div class="out">192.168.56.1</div>
+        <div class="explain">Filtramos cadenas legibles que coincidan con el patrón de una dirección IPv4.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar IP ]</span>
             <span class="hidden">🌐 192.168.56.1</span>
@@ -275,10 +302,10 @@
 
     <!-- ===== TAREA 3 ===== -->
     <div class="task">
-        <h3><span class="q">T3 ·</span> Puerto C2</h3>
+        <h3><span class="q">T3 ·</span> Puerto del C2</h3>
         <div class="cmd">$ objdump -d agent | grep -A5 -B5 'htons@plt'</div>
         <div class="out">mov    $0x115d,%edi<br />call   htons@plt</div>
-        <div class="cmd"># 0x115d → decimal</div>
+        <div class="explain">Localizamos la llamada a <code>htons</code> que convierte el puerto a orden de red. El valor <code>0x115d</code> en hexadecimal equivale al puerto decimal.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar puerto ]</span>
             <span class="hidden">🔌 4445</span>
@@ -290,6 +317,7 @@
         <h3><span class="q">T4 ·</span> Tiempo de espera (reconexión)</h3>
         <div class="cmd">$ objdump -d agent | grep -A2 -B2 'call.*sleep' | grep -o '\$0x[0-9a-f]*'</div>
         <div class="out">$0x78</div>
+        <div class="explain">Buscamos el argumento pasado a <code>sleep()</code>. <code>0x78</code> en hex corresponde a segundos.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar segundos ]</span>
             <span class="hidden">⏱️ 120</span>
@@ -301,10 +329,11 @@
         <h3><span class="q">T5 ·</span> Número de comandos soportados</h3>
         <div class="cmd">$ objdump -t agent | grep -c ' cmd_'</div>
         <div class="out">11</div>
-        <div class="note">📋 Comandos identificados: get, recv, users, netstat, kick, privesc, sdestruct, killbpf, exit, me, ps</div>
+        <div class="explain">Contamos las funciones que comienzan con <code>cmd_</code> en la tabla de símbolos. Cada una gestiona un comando específico.</div>
+        <div class="note">📋 Comandos identificados: <strong>get, recv, users, netstat, kick, privesc, sdestruct, killbpf, exit, me, ps</strong></div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar total ]</span>
-            <span class="hidden">✅ 11</span>
+            <span class="hidden">✅ 11 comandos</span>
         </div>
     </div>
 
@@ -313,6 +342,7 @@
         <h3><span class="q">T6 ·</span> Interfaz de kernel abusada</h3>
         <div class="cmd">$ strings agent | grep -i 'io_uring'</div>
         <div class="out">io_uring_queue_init<br />io_uring_queue_exit<br />io_uring_submit<br />__io_uring_get_cqe<br />io_uring_get_sqe</div>
+        <div class="explain">El binario referencia funciones de la biblioteca <code>liburing</code>, lo que indica que utiliza <code>io_uring</code> para evitar la supervisión de syscalls.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar interfaz ]</span>
             <span class="hidden">⚙️ io_uring</span>
@@ -324,6 +354,7 @@
         <h3><span class="q">T7 ·</span> Archivo de usuarios registrados</h3>
         <div class="cmd">$ strings agent | grep '/var/run/utmp'</div>
         <div class="out">/var/run/utmp</div>
+        <div class="explain">La cadena aparece en las cadenas del binario, indicando que lee ese archivo para enumerar sesiones activas.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar ruta ]</span>
             <span class="hidden">📄 /var/run/utmp</span>
@@ -335,6 +366,7 @@
         <h3><span class="q">T8 ·</span> Directorio de binarios SUID</h3>
         <div class="cmd">$ strings agent | grep '/usr/bin'</div>
         <div class="out">/usr/bin</div>
+        <div class="explain">El binario escanea este directorio en busca de ejecutables con el bit SUID activado para escalar privilegios.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar directorio ]</span>
             <span class="hidden">📁 /usr/bin</span>
@@ -346,6 +378,7 @@
         <h3><span class="q">T9 ·</span> String buscado en /proc/[pid]/maps (eBPF)</h3>
         <div class="cmd">$ strings agent | grep 'anon_inode:bpf-map'</div>
         <div class="out">anon_inode:bpf-map</div>
+        <div class="explain">Esta cadena identifica procesos que utilizan mapas eBPF, lo que permite al malware detectar herramientas de seguridad.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar string ]</span>
             <span class="hidden">🔎 anon_inode:bpf-map</span>
@@ -357,6 +390,7 @@
         <h3><span class="q">T10 ·</span> Primer archivo de tracing deshabilitado</h3>
         <div class="cmd">$ strings agent | grep '/sys/kernel/debug/tracing/tracing_on'</div>
         <div class="out">/sys/kernel/debug/tracing/tracing_on</div>
+        <div class="explain">El agente escribe en este archivo para desactivar el tracing del kernel y evadir la monitorización.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar ruta ]</span>
             <span class="hidden">📂 /sys/kernel/debug/tracing/tracing_on</span>
@@ -368,6 +402,7 @@
         <h3><span class="q">T11 ·</span> Ruta para obtener su propia ubicación ejecutable</h3>
         <div class="cmd">$ strings agent | grep '/proc/self/exe'</div>
         <div class="out">/proc/self/exe</div>
+        <div class="explain">Lee este enlace simbólico para conocer la ruta absoluta de su propio binario antes de autodestruirse.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar ruta ]</span>
             <span class="hidden">📌 /proc/self/exe</span>
@@ -379,6 +414,7 @@
         <h3><span class="q">T12 ·</span> Comando que desencadena autodestrucción</h3>
         <div class="cmd">$ strings agent | grep 'sdestruct'</div>
         <div class="out">sdestruct</div>
+        <div class="explain">El agente compara el comando recibido con esta cadena; si coincide, elimina su propio binario.</div>
         <div class="spoiler" onclick="this.classList.toggle('revealed')">
             <span class="mask">[ Mostrar comando ]</span>
             <span class="hidden">💣 sdestruct</span>
